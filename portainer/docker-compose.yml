@@ -1,0 +1,24 @@
+version: "3.5"
+
+networks:
+  portainer:
+    name: "portainer"
+
+services:
+  portainer-portainer:
+    image: "portainer/portainer"
+    container_name: "portainer"
+    networks:
+      - "portainer"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./portainer-portainer/certs:/certs"
+      - "./portainer-portainer/data:/data"
+    command:
+      --ssl
+      --sslcert /certs/cert.pem
+      --sslkey /certs/privkey.pem
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    restart: "always"

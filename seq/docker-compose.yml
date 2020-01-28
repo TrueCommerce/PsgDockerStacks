@@ -1,0 +1,35 @@
+version: "3.5"
+
+networks:
+  seq:
+    name: "seq"
+
+services:
+  seq-seq:
+    image: "datalust/seq:5"
+    container_name: "seq-seq"
+    networks:
+      - "seq"
+    volumes:
+      - "./seq-seq/data:/data"
+    environment:
+      ACCEPT_EULA: "Y"
+
+  seq-letsencrypt:
+    depends_on:
+      - "seq-seq"
+    image: "linuxserver/letsencrypt:1.0.0-ls79"
+    container_name: "seq-letsencrypt"
+    cap_add:
+      - "NET_ADMIN"
+    networks:
+      - "seq"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./seq-letsencrypt/config:/config"
+    environment:
+      EMAIL: "${SSL_EMAIL}"
+      URL: "${SSL_DOMAIN}"
+      VALIDATION: "http"
