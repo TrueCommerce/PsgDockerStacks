@@ -6,14 +6,14 @@ networks:
 
 services:
   devopsnetsuitesync-devopsnetsuitesync-sbx:
-    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.1.5"
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.0"
     container_name: "devopsnetsuitesync-sbx"
     networks:
       - "devopsnetsuitesync"
     restart: "always"
 
   devopsnetsuitesync-devopsnetsuitesync-dev:
-    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.1.5"
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.0"
       container_name: "devopsnetsuitesync-prod"
       networks:
         - "devopsnetsuitesync"
