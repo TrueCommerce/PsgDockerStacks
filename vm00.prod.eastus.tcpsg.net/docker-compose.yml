@@ -38,7 +38,7 @@ services:
     image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
     restart: "always"
     environment:
-      AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_DEV}"
+      AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_DEV}"
       DOTNET_ENVIRONMENT: "Development"
 
   # DevOps NetSuite Sync - Prod
@@ -46,7 +46,7 @@ services:
     image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
     restart: "always"
     environment:
-      AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
+      AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
       DOTNET_ENVIRONMENT: "Production"
 
   # NetSuite DataLake Ingestion
@@ -54,7 +54,7 @@ services:
     image: "tcpsg.azurecr.io/datalake-prototype-netsuite:1.0.4"
     restart: "always"
     environment:
-      AzureAd__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
+      AzureKeyVault__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
       DOTNET_ENVIRONMENT: "Production"
 
   # Portainer
