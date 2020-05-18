@@ -1,0 +1,112 @@
+version: "3.5"
+
+networks:
+  proxy:
+    name: "proxy"
+  internal:
+    name: "internal"
+
+services: 
+
+  # Shared Reverse Proxy
+  reverse-proxy:
+    image: "traefik:v2.2"
+    networks:
+      - "proxy"
+    ports:
+      - "443:443"
+      - "80:80"
+      - "8080:8080"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=proxy"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.tcpsg.acme.tlschallenge=true"
+      - "--certificatesresolvers.tcpsg.acme.email=josh.johnson@truecommerce.com"
+      - "--certificatesresolvers.tcpsg.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - "./shared/reverse-proxy/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  # DevOps NetSuite Sync - Dev
+  devopsnetsuitesync-dev:
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    environment:
+      AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_DEV}"
+      DOTNET_ENVIRONMENT: "Development"
+
+  # DevOps NetSuite Sync - Prod
+  devopsnetsuitesync-prod:
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    environment:
+      AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
+      DOTNET_ENVIRONMENT: "Production"
+
+  # NetSuite DataLake Ingestion
+  datalake-prototype-netsuite:
+    image: "tcpsg.azurecr.io/datalake-prototype-netsuite:1.0.4"
+    environment:
+      AzureAd__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
+      DOTNET_ENVIRONMENT: "Production"
+
+  # Portainer
+  portainer:
+    image: "portainer/portainer"
+    networks:
+      - "proxy"
+    ports:
+      - "9000:80"
+    volumes:
+      - "./data/portainer:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.vm00.prod.eastus.tcpsg.net`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.routers.portainer.tls.certresolver=tcpsg"
+      - "traefik.http.services.portainer.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+  # PostOffice
+  postoffice:
+    image: "tcpsg.azurecr.io/postoffice:1.0.0-beta.1"
+    networks:
+      - "proxy"
+    volumes:
+      - "./data/postoffice:/app/data"
+    environment:
+      AzureAd__ClientSecret: "${POSTOFFICE_AZUREAD_CLIENTSECRET}"
+      PostOffice__Infrastructure__SendGrid__ApiKey: "${POSTOFFICE_SENDGRID_APIKEY}"
+      DOTNET_ENVIRONMENT: "Production"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.postoffice.rule=Host(`postoffice.tcpsg.net`)"
+      - "traefik.http.routers.postoffice.entrypoints=websecure"
+      - "traefik.http.routers.postoffice.service=postoffice"
+      - "traefik.http.routers.postoffice.tls.certresolver=tcpsg"
+      - "traefik.http.services.postoffice.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+  # Seq Logging Server
+  seq:
+    image: "datalust/seq:5"
+    networks:
+      - "proxy"
+    volumes:
+      - "./data/seq:/data"
+    environment:
+      ACCEPT_EULA: "Y"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.seq.rule=Host(`seq.tcpsg.net`)"
+      - "traefik.http.routers.seq.entrypoints=websecure"
+      - "traefik.http.routers.seq.service=seq"
+      - "traefik.http.routers.seq.tls.certresolver=tcpsg"
+      - "traefik.http.services.seq.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
