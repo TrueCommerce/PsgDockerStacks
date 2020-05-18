@@ -11,6 +11,7 @@ services:
   # Shared Reverse Proxy
   reverse-proxy:
     image: "traefik:v2.2"
+    restart: "always"
     networks:
       - "proxy"
     ports:
@@ -27,7 +28,7 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.tcpsg.acme.tlschallenge=true"
-      - "--certificatesresolvers.tcpsg.acme.email=josh.johnson@truecommerce.com"
+      - "--certificatesresolvers.tcpsg.acme.email=${SSL_EMAIL}"
       - "--certificatesresolvers.tcpsg.acme.storage=/letsencrypt/acme.json"
     volumes:
       - "./shared/reverse-proxy/letsencrypt:/letsencrypt"
@@ -36,6 +37,7 @@ services:
   # DevOps NetSuite Sync - Dev
   devopsnetsuitesync-dev:
     image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    restart: "always"
     environment:
       AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_DEV}"
       DOTNET_ENVIRONMENT: "Development"
@@ -43,6 +45,7 @@ services:
   # DevOps NetSuite Sync - Prod
   devopsnetsuitesync-prod:
     image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    restart: "always"
     environment:
       AzureAd__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
       DOTNET_ENVIRONMENT: "Production"
@@ -50,6 +53,7 @@ services:
   # NetSuite DataLake Ingestion
   datalake-prototype-netsuite:
     image: "tcpsg.azurecr.io/datalake-prototype-netsuite:1.0.4"
+    restart: "always"
     environment:
       AzureAd__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
       DOTNET_ENVIRONMENT: "Production"
@@ -57,6 +61,7 @@ services:
   # Portainer
   portainer:
     image: "portainer/portainer"
+    restart: "always"
     networks:
       - "proxy"
     ports:
@@ -76,6 +81,7 @@ services:
   # PostOffice
   postoffice:
     image: "tcpsg.azurecr.io/postoffice:1.0.0-beta.1"
+    restart: "always"
     networks:
       - "proxy"
     volumes:
@@ -96,6 +102,7 @@ services:
   # Seq Logging Server
   seq:
     image: "datalust/seq:5"
+    restart: "always"
     networks:
       - "proxy"
     volumes:
