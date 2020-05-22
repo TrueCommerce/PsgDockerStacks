@@ -56,6 +56,7 @@ services:
     environment:
       AzureKeyVault__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
       DOTNET_ENVIRONMENT: "Production"
+      PSGDataLake__Schedule: "0 */6 * * *"
 
   # Portainer
   portainer:
