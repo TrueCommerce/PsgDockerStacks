@@ -51,7 +51,7 @@ services:
 
   # NetSuite DataLake Ingestion
   datalake-prototype-netsuite:
-    image: "tcpsg.azurecr.io/datalake-prototype-netsuite:1.0.4"
+    image: "tcpsg.azurecr.io/datalake-prototype-netsuite:1.1.0"
     restart: "always"
     environment:
       AzureKeyVault__ClientSecret: "${DATALAKE_AZUREAD_CLIENTSECRET}"
