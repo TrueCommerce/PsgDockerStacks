@@ -65,7 +65,7 @@ services:
   fider:
     depends_on:
       - "postgresql"
-    image: "getfider/fider:0.8.0"
+    image: "getfider/fider:0.18.0"
     restart: "always"
     networks:
       - "proxy"
@@ -74,7 +74,6 @@ services:
       GO_ENV: "production"
       DATABASE_URL: "postgres://fider:${POSTGRES_PASSWORD}@postgresql:5432/fider?sslmode=disable"
       JWT_SECRET: "${FIDER_JWT_SECRET}"
-      NOREPLY_EMAIL: "noreply@tcpsg.net"
       EMAIL_NOREPLY: "noreply@tcpsg.net"
       EMAIL_SMTP_HOST: "${FIDER_SMTP_HOST}"
       EMAIL_SMTP_PORT: "${FIDER_SMTP_PORT}"
