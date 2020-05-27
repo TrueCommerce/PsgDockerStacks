@@ -33,6 +33,18 @@ services:
       - "./shared/reverse-proxy/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
+  # Shared PostgreSQL Database
+  postgresql:
+    image: "postgres:11.8"
+    restart: "always"
+    networks:
+      - "internal"
+    volumes:
+      - "./shared/postgresql/data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: "fider"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+
   # DevOps NetSuite Sync - Dev
   devopsnetsuitesync-dev:
     image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
@@ -48,6 +60,33 @@ services:
     environment:
       AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
       DOTNET_ENVIRONMENT: "Production"
+
+  # Fider
+  fider:
+    depends_on:
+      - "postgresql"
+    image: "getfider/fider:0.8.0"
+    restart: "always"
+    networks:
+      - "proxy"
+      - "internal"
+    environment:
+      GO_ENV: "production"
+      DATABASE_URL: "postgres://fider:${POSTGRES_PASSWORD}@postgresql:5432/fider?sslmode=disable"
+      JWT_SECRET: "${FIDER_JWT_SECRET}"
+      EMAIL_NOREPLY: "noreply@tcpsg.net"
+      EMAIL_SMTP_HOST: "${FIDER_SMTP_HOST}"
+      EMAIL_SMTP_PORT: "${FIDER_SMTP_PORT}"
+      EMAIL_SMTP_USERNAME: "${FIDER_SMTP_USERNAME}"
+      EMAIL_SMTP_PASSWORD: "${FIDER_SMTP_PASSWORD}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fider.rule=Host(`ideas.tcpsg.net`)"
+      - "traefik.http.routers.fider.entrypoints=websecure"
+      - "traefik.http.routers.fider.service=fider"
+      - "traefik.http.routers.fider.tls.certresolver=tcpsg"
+      - "traefik.http.services.fider.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
 
   # NetSuite DataLake Ingestion
   datalake-prototype-netsuite:

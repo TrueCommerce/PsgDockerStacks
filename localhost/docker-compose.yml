@@ -1,0 +1,44 @@
+version: "3.5"
+
+networks:
+  dmz:
+    name: "dmz"
+  internal:
+    name: "internal"
+
+volumes:
+  postgresql:
+
+services:
+
+  # PostgreSQL
+  postgresql:
+    image: "postgres:9.6"
+    restart: "always"
+    networks:
+      - "internal"
+    volumes:
+      - "postgresql:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: "fider"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+
+  fider:
+    depends_on:
+      - "postgresql"
+    image: "getfider/fider:0.18.0"
+    restart: "always"
+    networks:
+      - "dmz"
+      - "internal"
+    ports:
+      - "9999:3000"
+    environment:
+      GO_ENV: "${ENVIRONMENT}"
+      DATABASE_URL: "postgres://fider:${POSTGRES_PASSWORD}@postgresql:5432/fider?sslmode=disable"
+      JWT_SECRET: "${FIDER_JWT_SECRET}"
+      EMAIL_NOREPLY: "noreply@tcpsg.net"
+      EMAIL_SMTP_HOST: "${FIDER_SMTP_HOST}"
+      EMAIL_SMTP_PORT: "${FIDER_SMTP_PORT}"
+      EMAIL_SMTP_USERNAME: "${FIDER_SMTP_USERNAME}"
+      EMAIL_SMTP_PASSWORD: "${FIDER_SMTP_PASSWORD}"
