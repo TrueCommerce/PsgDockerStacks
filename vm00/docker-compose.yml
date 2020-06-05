@@ -61,6 +61,25 @@ services:
       AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
       DOTNET_ENVIRONMENT: "Production"
 
+  # Dynamic Forms - UAT
+  dynamicforms-uat:
+    image: "tcpsg.azurecr.io/dynamicforms:latest"
+    restart: "always"
+    networks:
+      - "proxy"
+    environment:
+      AzureAd__ClientSecret: "${DYNAMICFORMS_AZUREAD_CLIENTSECRET_UAT}"
+      AzureKeyVault__ClientSecret: "${DYNAMICFORMS_AZUREAD_CLIENTSECRET_UAT}"
+      DOTNET_ENVIRONMENT: "Development"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dynamicforms-uat.rule=Host(`forms.uat.tcpsg.net`)"
+      - "traefik.http.routers.dynamicforms-uat.entrypoints=websecure"
+      - "traefik.http.routers.dynamicforms-uat.service=dynamicforms-uat"
+      - "traefik.http.routers.dynamicforms-uat.tls.certresolver=tcpsg"
+      - "traefik.http.services.dynamicforms-uat.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
   # Fider
   fider:
     depends_on:
