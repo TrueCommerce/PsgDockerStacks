@@ -106,6 +106,14 @@ services:
       - "traefik.http.routers.fider.tls.certresolver=tcpsg"
       - "traefik.http.services.fider.loadbalancer.server.port=3000"
       - "traefik.docker.network=proxy"
+      
+  # Mavenlink Assigned To Sync
+  mavenlink-assignedtosync:
+    image: "tcpsg.azurecr.io/mavenlink-assignedtosync:latest"
+    restart: "always"
+    environment:
+      AzureKeyVault__ClientSecret: "${WORKERSERVICES_AZUREAD_CLIENTSECRET}"
+      DOTNET_ENVIRONMENT: "Production"
 
   # NetSuite DataLake Ingestion
   datalake-prototype-netsuite:
