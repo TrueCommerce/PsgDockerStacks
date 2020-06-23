@@ -152,6 +152,7 @@ services:
       - "./data/postoffice:/app/data"
     environment:
       AzureAd__ClientSecret: "${POSTOFFICE_AZUREAD_CLIENTSECRET}"
+      AzureKeyVault__ClientSecret: "${POSTOFFICE_AZUREAD_CLIENTSECRET}"
       PostOffice__Infrastructure__SendGrid__ApiKey: "${POSTOFFICE_SENDGRID_APIKEY}"
       DOTNET_ENVIRONMENT: "Production"
     labels:
