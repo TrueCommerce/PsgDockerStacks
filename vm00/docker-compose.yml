@@ -63,7 +63,7 @@ services:
 
   # Dynamic Forms - UAT
   dynamicforms-uat:
-    image: "tcpsg.azurecr.io/dynamicforms:latest"
+    image: "tcpsg.azurecr.io/dynamicforms:uat"
     restart: "always"
     networks:
       - "proxy"
