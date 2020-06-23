@@ -144,7 +144,7 @@ services:
 
   # PostOffice
   postoffice:
-    image: "tcpsg.azurecr.io/postoffice:1.0.0-beta.1"
+    image: "tcpsg.azurecr.io/postoffice:latest"
     restart: "always"
     networks:
       - "proxy"
