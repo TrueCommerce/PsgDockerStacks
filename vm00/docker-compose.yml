@@ -161,26 +161,6 @@ services:
       - "traefik.http.routers.postoffice.tls.certresolver=tcpsg"
       - "traefik.http.services.postoffice.loadbalancer.server.port=80"
       - "traefik.docker.network=proxy"
-      
-  # PostOffice UAT
-  postoffice-uat:
-    image: "tcpsg.azurecr.io/postoffice:uat"
-    restart: "always"
-    networks:
-      - "proxy"
-    environment:
-      AzureAd__ClientSecret: "${POSTOFFICE_AZUREAD_CLIENTSECRET}"
-      AzureKeyVault__ClientSecret: "${POSTOFFICE_AZUREAD_CLIENTSECRET}"
-      PostOffice__Infrastructure__SendGrid__ApiKey: "${POSTOFFICE_SENDGRID_APIKEY}"
-      DOTNET_ENVIRONMENT: "Development"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.postoffice-uat.rule=Host(`postoffice.uat.tcpsg.net`)"
-      - "traefik.http.routers.postoffice-uat.entrypoints=websecure"
-      - "traefik.http.routers.postoffice-uat.service=postoffice-uat"
-      - "traefik.http.routers.postoffice-uat.tls.certresolver=tcpsg"
-      - "traefik.http.services.postoffice-uat.loadbalancer.server.port=80"
-      - "traefik.docker.network=proxy"
 
   # Seq Logging Server
   seq:
