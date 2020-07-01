@@ -79,6 +79,25 @@ services:
       - "traefik.http.routers.dynamicforms-uat.tls.certresolver=tcpsg"
       - "traefik.http.services.dynamicforms-uat.loadbalancer.server.port=80"
       - "traefik.docker.network=proxy"
+      
+  # Dynamic Forms
+  dynamicforms:
+    image: "tcpsg.azurecr.io/dynamicforms:master"
+    restart: "always"
+    networks:
+      - "proxy"
+    environment:
+      AzureAd__ClientSecret: "${DYNAMICFORMS_AZUREAD_CLIENTSECRET_UAT}"
+      AzureKeyVault__ClientSecret: "${DYNAMICFORMS_AZUREAD_CLIENTSECRET_UAT}"
+      DOTNET_ENVIRONMENT: "Production"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dynamicforms.rule=Host(`forms.tcpsg.net`)"
+      - "traefik.http.routers.dynamicforms.entrypoints=websecure"
+      - "traefik.http.routers.dynamicforms.service=dynamicforms"
+      - "traefik.http.routers.dynamicforms.tls.certresolver=tcpsg"
+      - "traefik.http.services.dynamicforms.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
 
   # Fider
   fider:
