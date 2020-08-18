@@ -126,9 +126,9 @@ services:
       - "traefik.http.services.fider.loadbalancer.server.port=3000"
       - "traefik.docker.network=proxy"
       
-  # Mavenlink Assigned To Sync
-  mavenlink-assignedtosync:
-    image: "tcpsg.azurecr.io/mavenlink-assignedtosync:latest"
+  # Worker Services
+  workerservices:
+    image: "tcpsg.azurecr.io/workerservices:latest"
     restart: "always"
     environment:
       AzureKeyVault__ClientSecret: "${WORKERSERVICES_AZUREAD_CLIENTSECRET}"
