@@ -47,7 +47,7 @@ services:
 
   # DevOps NetSuite Sync - Dev
   devopsnetsuitesync-dev:
-    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.3.0"
     restart: "always"
     environment:
       AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_DEV}"
@@ -55,7 +55,7 @@ services:
 
   # DevOps NetSuite Sync - Prod
   devopsnetsuitesync-prod:
-    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.2.2"
+    image: "tcpsg.azurecr.io/devopsnetsuitesync:3.3.0"
     restart: "always"
     environment:
       AzureKeyVault__ClientSecret: "${DEVOPSSYNC_AZUREAD_CLIENTSECRET_PROD}"
